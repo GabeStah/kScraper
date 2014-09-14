@@ -2,7 +2,7 @@ require 'capistrano/sidekiq'
 # config valid only for Capistrano 3.1
 lock '3.2.1'
 
-set :application, 'kScraper'
+set :application, 'kscraper'
 
 # Default value for :scm is :git
 set :scm, :git
@@ -80,7 +80,7 @@ namespace :deploy do
   desc 'Upload database.yml'
   task :upload_db_yml do
     run_locally do
-      execute :scp, '~/dev/projects/vcp/config/database.yml', 'deploy@gabestah.com:/var/www/vcp/shared/config/database.yml'
+      execute :scp, "~/dev/projects/kscraper/config/database.yml", "deploy@gabestah.com:/var/www/kscraper/shared/config/database.yml"
     end
   end
 

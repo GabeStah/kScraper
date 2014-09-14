@@ -12,7 +12,7 @@ require 'mina/git'
 
 set :domain, 'gabestah.com'
 set :deploy_to, '/var/www/kscraper'
-set :repository, 'git@github.com:GabeStah/kScraper.git'
+set :repository, 'https://github.com/GabeStah/kScraper.git'
 set :branch, 'master'
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.

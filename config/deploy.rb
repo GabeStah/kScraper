@@ -3,6 +3,7 @@ require 'capistrano/sidekiq'
 lock '3.2.1'
 
 set :application, 'kscraper'
+set :working_directory, 'kScraper'
 
 # Default value for :scm is :git
 set :scm, :git
@@ -13,7 +14,10 @@ set :branch, 'master'
 set :user, "deploy"
 
 # Default deploy_to directory is /var/www/my_app
-set :deploy_to, '/var/www/kscraper'
+set :deploy_to, "/var/www/#{fetch(:application)}"
+
+# Link database.yml file
+set :linked_files, %w{config/database.yml}
 
 # How to make updates
 set :deploy_via, :copy
@@ -82,7 +86,7 @@ namespace :deploy do
   desc 'Upload database.yml'
   task :upload_db_yml do
     run_locally do
-      execute :scp, "~/dev/projects/kScraper/config/database.yml", "deploy@gabestah.com:/var/www/kscraper/shared/config/database.yml"
+      execute :scp, "~/dev/projects/#{fetch(:working_directory)}/config/database.yml", "deploy@gabestah.com:/var/www/#{fetch(:application)}/shared/config/database.yml"
     end
   end
 

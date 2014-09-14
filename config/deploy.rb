@@ -29,6 +29,8 @@ set :ssh_options, { forward_agent: true, user: fetch(:user) }
 # Set temp directory
 set :tmp_dir, "/home/deploy/tmp"
 
+set :pty, false
+
 # Simple Role Syntax
 # ==================
 # Supports bulk-adding hosts to roles, the primary
@@ -87,7 +89,7 @@ namespace :deploy do
   before :started, :upload_db_yml
 
   after :publishing, :restart
-  after :publishing, :seed_db
+  #after :publishing, :seed_db
   after :restart, :seed_db
   after :restart, :clear_cache do
     on roles(:web), in: :groups, limit: 3, wait: 10 do

@@ -50,11 +50,7 @@ group :doc do
 end
 
 group :development do
-  gem 'capistrano'
-  gem 'capistrano-bundler'
-  gem 'capistrano-rails'
-  gem 'capistrano-rvm'
-  gem 'capistrano-sidekiq' , github: 'seuros/capistrano-sidekiq'
+  gem 'mina'
 end
 
 # Use ActiveModel has_secure_password

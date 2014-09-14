@@ -80,7 +80,7 @@ namespace :deploy do
   desc 'Upload database.yml'
   task :upload_db_yml do
     run_locally do
-      execute :scp, "~/dev/projects/kscraper/config/database.yml", "deploy@gabestah.com:/var/www/kscraper/shared/config/database.yml"
+      execute :scp, "~/dev/projects/kScraper/config/database.yml", "deploy@gabestah.com:/var/www/kscraper/shared/config/database.yml"
     end
   end
 

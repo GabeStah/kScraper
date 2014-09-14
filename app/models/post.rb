@@ -26,14 +26,20 @@ class Post < ActiveRecord::Base
         title = item.xpath('td[@class="title-cell"]/a/span').text.to_s
         date_created = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateCreated"]/@content').to_s.to_datetime
         date_modified = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateModified"]/@content').to_s.to_datetime
-        post = Post.find_by(topic_id: topic_id)
+        begin
+          post = Post.find_by(topic_id: topic_id, title: title)
+        rescue ActiveRecord::RecordNotUnique
+          retry
+        end
         # Responded
+        # TODO Create worker to update Post record based on found response.
         response_character = check_response(topic_id)
         if post
-          post.update_attributes(title: title,
-                                 date_modified: date_modified,
-                                 response_by: response_character,
-                                 responded: response_character ? true : false)
+          post.update_attributes(response_by: response_character,
+                                 responded: response_character ? true : false,
+                                 ignored: false,
+                                 date_created: date_created,
+                                 date_modified: date_modified)
         else
           Post.create(topic_id: topic_id,
                       title: title,
@@ -46,6 +52,10 @@ class Post < ActiveRecord::Base
       end
     end
     @posts
+  end
+
+  def self.update_response(id)
+    # TODO Create worker to update Post record based on found response.
   end
 
   def self.check_response(id)

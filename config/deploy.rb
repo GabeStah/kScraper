@@ -45,9 +45,6 @@ task :setup => :environment do
   queue! %[mkdir -p "#{deploy_to}/shared/config"]
   queue! %[chmod g+rx,u+rwx "#{deploy_to}/shared/config"]
 
-  queue! %[mkdir -p "#{deploy_to}/current/tmp"]
-  queue! %[chmod g+rx,u+rwx "#{deploy_to}/current/tmp"]
-
   queue! %[touch "#{deploy_to}/shared/config/database.yml"]
   queue  %[echo "-----> Be sure to edit 'shared/config/database.yml'."]
 end
@@ -67,7 +64,7 @@ task :deploy => :environment do
     invoke :reset_db
 
     to :launch do
-      queue "touch #{deploy_to}/tmp/restart.txt"
+      invoke :restart_rails
       invoke :'sidekiq:restart'
     end
   end
@@ -76,6 +73,13 @@ end
 desc "Resetting Database"
 task :reset_db do
   queue 'rake app:reset_production RAILS_ENV=production'
+end
+
+desc "Restart Rails"
+task :restart_rails do
+  queue! %[mkdir -p "#{deploy_to}/#{current_path}/tmp"]
+  queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{current_path}/tmp"]
+  queue "touch #{deploy_to}/#{current_path}/tmp/restart.txt"
 end
 
 # For help in making your deploy script, see the Mina documentation:

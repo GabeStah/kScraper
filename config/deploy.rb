@@ -58,11 +58,16 @@ task :deploy => :environment do
     invoke :'bundle:install'
     invoke :'rails:db_migrate'
     invoke :'rails:assets_precompile'
+    invoke :reset_db
 
     to :launch do
       queue "touch #{deploy_to}/tmp/restart.txt"
     end
   end
+end
+
+task :reset_db do
+  queue 'rake app:reset'
 end
 
 # For help in making your deploy script, see the Mina documentation:

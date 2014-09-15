@@ -4,7 +4,7 @@ class ScrapeWorker
   sidekiq_options queue: :priority
 
   recurrence do
-    secondly(120)
+    minutely(1)
   end
 
   def perform

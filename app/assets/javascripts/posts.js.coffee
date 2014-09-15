@@ -7,7 +7,7 @@ jQuery ->
     #ajax: $('#posts-table').data('source')
     ajax: '/posts.json'
     columnDefs: [{
-      width: '25px'
+      width: '32px'
       targets: 0
       sorting: false
     }]

@@ -69,7 +69,7 @@ end
 
 desc "Resetting Database"
 task :reset_db do
-  queue 'rake app:reset RAILS_ENV=production'
+  queue 'rake app:reset_production RAILS_ENV=production'
 end
 
 desc "Starting SideKiq"

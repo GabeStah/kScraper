@@ -20,7 +20,7 @@ jQuery ->
   # Refresh data
   setInterval ->
     table.ajax.reload(null, false)
-  , 50000
+  , 5000
 
   # Hide row temporarily when Ignored clicked
   $('#posts-table tbody').on(

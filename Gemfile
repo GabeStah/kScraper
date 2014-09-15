@@ -44,6 +44,12 @@ gem 'sidekiq-failures'
 gem 'sidetiq'
 gem 'sinatra', '>= 1.3.0', :require => nil
 
+# Fonts!
+gem 'font-awesome-rails'
+
+# Tooltips
+gem 'bootstrap-tooltip-rails'
+
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false

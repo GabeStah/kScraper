@@ -1,7 +1,9 @@
 KScraper::Application.routes.draw do
   devise_for :users
   root 'static#index'
-  resources :posts
+  resources :posts do
+    post 'toggle_ignored', on: :member
+  end
   require 'sidekiq/web'
   require 'sidetiq/web'
   mount Sidekiq::Web => '/sidekiq'

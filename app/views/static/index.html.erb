@@ -1,11 +1,9 @@
 <% provide(:title, 'Posts') %>
-<h1>Posts</h1>
 
-<table class="posts table table-striped table-bordered table-white" id="posts-table" data-source="<%= posts_path(format: :json) %>">
+<table class="posts table display compact" id="posts-table" data-source="<%= posts_path(format: :json) %>">
   <thead>
-    <th>Topic</th>
-    <th>Responded</th>
-    <th>Ignored</th>
+    <th></th>
+    <th>Title</th>
     <th>Created</th>
     <th>Last Post</th>
   </thead>

@@ -4,7 +4,6 @@ class ScrapeWorker
 
   recurrence do
     secondly(120)
-    #daily(1).hour_of_day(2)
   end
 
   def perform

@@ -62,14 +62,14 @@ task :deploy => :environment do
 
     to :launch do
       queue "touch #{deploy_to}/tmp/restart.txt"
-      invoke :start_sidekiq
+      #invoke :start_sidekiq
     end
   end
 end
 
 desc "Resetting Database"
 task :reset_db do
-  queue 'rake app:reset'
+  queue 'rake app:reset RAILS_ENV=production'
 end
 
 desc "Starting SideKiq"

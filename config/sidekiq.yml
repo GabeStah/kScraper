@@ -1,6 +1,3 @@
-:concurrency: 20
 :pidfile: ./shared/pids/sidekiq.pid
-production:
-  :concurrency: 20
 :queues:
   - default

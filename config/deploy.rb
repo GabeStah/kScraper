@@ -61,7 +61,7 @@ task :deploy => :environment do
     invoke :'bundle:install'
     invoke :'rails:db_migrate'
     invoke :'rails:assets_precompile'
-    invoke :reset_db
+    #invoke :reset_db
 
     to :launch do
       invoke :restart_rails

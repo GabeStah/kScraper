@@ -25,6 +25,11 @@ en:
       default: '%m/%d/%Y'
       short: '%m/%d/%Y'
   datetime:
+    distance_in_words:
+      about_x_hours:
+        # The defaults are "about 1 hour" and "about %{count} hours"
+        one: "1 hour"
+        other: "%{count} hours"
     formats:
       default: '%m/%d/%Y %I:%M %p'
   time:

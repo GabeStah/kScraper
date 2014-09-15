@@ -1,7 +1,7 @@
 class PostDatatable < AjaxDatatablesRails::Base
   include AjaxDatatablesRails::Extensions::WillPaginate
 
-  def_delegators :@view, :l, :link_to, :toggle_ignored_post_path, :fa_icon
+  def_delegators :@view, :l, :link_to, :toggle_ignored_post_path, :fa_icon, :time_ago_in_words
 
   def sortable_columns
     @sortable_columns ||= ['posts.response_by', 'posts.title', 'posts.date_created', 'posts.date_modified']
@@ -20,8 +20,8 @@ class PostDatatable < AjaxDatatablesRails::Base
       [
         "#{ignored_icon} #{post_icon}",
         link_to(post.title, post.url),
-        l(post.date_created),
-        l(post.date_modified)
+        time_ago_in_words(post.date_created, include_seconds: true),
+        time_ago_in_words(post.date_modified, include_seconds: true)
       ]
     end
   end

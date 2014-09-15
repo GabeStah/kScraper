@@ -62,12 +62,19 @@ task :deploy => :environment do
 
     to :launch do
       queue "touch #{deploy_to}/tmp/restart.txt"
+      invoke :start_sidekiq
     end
   end
 end
 
+desc "Resetting Database"
 task :reset_db do
   queue 'rake app:reset'
+end
+
+desc "Starting SideKiq"
+task :start_sidekiq do
+  queue 'bundle exec sidekiq'
 end
 
 # For help in making your deploy script, see the Mina documentation:

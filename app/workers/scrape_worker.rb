@@ -1,6 +1,7 @@
 class ScrapeWorker
   include Sidekiq::Worker
   include Sidetiq::Schedulable
+  sidekiq_options queue: :priority
 
   recurrence do
     secondly(120)

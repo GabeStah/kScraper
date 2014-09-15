@@ -4,7 +4,6 @@ class RefreshWorker
 
   recurrence do
     minutely(5)
-    #daily(1).hour_of_day(2)
   end
 
   def perform

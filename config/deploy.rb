@@ -61,7 +61,8 @@ task :deploy => :environment do
     invoke :'bundle:install'
     invoke :'rails:db_migrate'
     invoke :'rails:assets_precompile'
-    invoke :reset_db
+    # Disable reset DB temporarily
+    #invoke :reset_db
 
     to :launch do
       queue "touch #{deploy_to}/tmp/restart.txt"

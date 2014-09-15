@@ -43,6 +43,8 @@ gem 'sidekiq', github: 'mperham/sidekiq'
 gem 'sidekiq-failures'
 gem 'sidetiq'
 gem 'sinatra', '>= 1.3.0', :require => nil
+# With Minaaaa
+gem 'mina-sidekiq'
 
 # Fonts!
 gem 'font-awesome-rails'

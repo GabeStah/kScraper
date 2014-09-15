@@ -53,6 +53,8 @@ task :deploy => :environment do
   deploy do
     # Put things that will set up an empty directory into a fully set-up
     # instance of your project.
+    # stop accepting new workers
+    invoke :'sidekiq:quiet'
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'
     invoke :'bundle:install'
@@ -62,7 +64,7 @@ task :deploy => :environment do
 
     to :launch do
       queue "touch #{deploy_to}/tmp/restart.txt"
-      queue 'bundle exec sidekiq'
+      invoke :'sidekiq:restart'
     end
   end
 end

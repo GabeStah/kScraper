@@ -9,6 +9,8 @@
 /.idea
 /.idea/
 
+shared/
+
 # Ignore bundler config.
 /.bundle
 

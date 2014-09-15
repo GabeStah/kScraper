@@ -1,5 +1,5 @@
-:concurrency: 5
-:pidfile: tmp/pids/sidekiq.pid
+:concurrency: 20
+:pidfile: ./shared/pids/sidekiq.pid
 production:
   :concurrency: 20
 :queues:

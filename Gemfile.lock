@@ -1,6 +1,6 @@
 GIT
-  remote: git://github.com/antillas21/ajax-datatables-rails.git
-  revision: b8c50d7e2bdcc2488655f4a6ec9d448cde2988fc
+  remote: git://github.com/GabeStah/ajax-datatables-rails.git
+  revision: 45937fff8b49167af096b5e862b8d9b260479458
   specs:
     ajax-datatables-rails (0.2.1)
       railties (>= 3.1)

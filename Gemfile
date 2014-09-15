@@ -36,7 +36,7 @@ gem 'will_paginate'
 # DataTables
 gem 'jquery-datatables-rails', '~> 2.2.1'
 # Ajax DataTables integration
-gem 'ajax-datatables-rails', github: 'antillas21/ajax-datatables-rails'
+gem 'ajax-datatables-rails', github: 'GabeStah/ajax-datatables-rails'
 
 # Background processing
 gem 'sidekiq', github: 'mperham/sidekiq'

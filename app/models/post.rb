@@ -20,10 +20,10 @@ class Post < ActiveRecord::Base
   def self.populate_posts(page_num=1, thread_limit)
     page_suffix = "?page=#{page_num}"
     doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/1011639/#{page_suffix}").read)
-    thread_limit = 100 if thread_limit.nil?
+    thread_limit = 75 if thread_limit.nil?
     thread_count = 1
     doc.xpath('//*[@id="forum-topics"]/tbody[@class="regular-topics sort-connect"]/tr').each do |item|
-      while thread_count <= thread_limit
+      if thread_count <= thread_limit
         topic_id = item.xpath('@data-topic-id').to_s.to_i
         title = item.xpath('td[@class="title-cell"]/a/span').text.to_s
         date_created = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateCreated"]/@content').to_s.to_datetime

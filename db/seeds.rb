@@ -6,7 +6,7 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 25.times do |count|
-  ScrapeWorker.perform_async(count + 1)
+  ScrapeWorker.perform_async(count + 1, 75)
 end
 
 #Post.populate_posts(page_count: 10)

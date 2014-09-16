@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140913022753) do
+ActiveRecord::Schema.define(version: 20140915170316) do
 
   create_table "posts", force: true do |t|
     t.string   "title"
@@ -23,7 +23,11 @@ ActiveRecord::Schema.define(version: 20140913022753) do
     t.datetime "date_created"
     t.datetime "date_modified"
     t.string   "response_by"
+    t.string   "author_name"
+    t.string   "author_armory"
   end
+
+  add_index "posts", ["topic_id"], name: "index_posts_on_topic_id", unique: true, using: :btree
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false

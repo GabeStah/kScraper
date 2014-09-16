@@ -2,6 +2,7 @@ class StaticController < ApplicationController
 
   def index
     #@posts = Post.populate_posts
-    #Post.check_response(14394869477)
+    #post = Post.find_by(topic_id: 14420052291)
+    #post.find_response
   end
 end

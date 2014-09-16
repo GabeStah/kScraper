@@ -12,7 +12,7 @@ jQuery ->
       sorting: false
     }]
     lengthMenu: [ [25, 50, 100, 2147483646], [25, 50, 100, "All"] ]
-    order: [[2, "desc" ]]
+    order: [[3, "desc" ]]
     pagingType: 'full_numbers'
     processing: true
     serverSide: true
@@ -20,7 +20,7 @@ jQuery ->
   # Refresh data
   setInterval ->
     table.ajax.reload(null, false)
-  , 10000
+  , 30000
 
   # Hide row temporarily when Ignored clicked
   $('#posts-table tbody').on(
@@ -28,6 +28,9 @@ jQuery ->
     'a[id*=ignored_link_]'
     -> $(this).parent().parent().hide()
   )
+
+#  $('#posts-table tbody tr').each ->
+#    $('td:nth-of-type(3)').addClass('special')
 
 #jQuery ->
 #  $('td').hover -> alert($(this).attr 'id')

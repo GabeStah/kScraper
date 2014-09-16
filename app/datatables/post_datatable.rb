@@ -4,11 +4,11 @@ class PostDatatable < AjaxDatatablesRails::Base
   def_delegators :@view, :l, :link_to, :toggle_ignored_post_path, :fa_icon, :time_ago_in_words
 
   def sortable_columns
-    @sortable_columns ||= ['posts.response_by', 'posts.title', 'posts.date_created', 'posts.date_modified']
+    @sortable_columns ||= ['posts.response_by', 'posts.title', 'posts.author_name', 'posts.date_created', 'posts.date_modified']
   end
 
   def searchable_columns
-    @searchable_columns ||= ['posts.response_by', 'posts.title']
+    @searchable_columns ||= ['posts.response_by', 'posts.title', 'posts.author_name']
   end
 
   private
@@ -20,6 +20,7 @@ class PostDatatable < AjaxDatatablesRails::Base
       [
         "#{ignored_icon} #{post_icon}",
         link_to(post.title, post.url),
+        post.author_armory ? link_to(post.author_name, post.author_armory) : post.author_name ? post.author_name : nil,
         time_ago_in_words(post.date_created, include_seconds: true),
         time_ago_in_words(post.date_modified, include_seconds: true)
       ]

@@ -26,17 +26,13 @@ class Post < ActiveRecord::Base
       if count != 1
         page_suffix = "?page=#{count}"
       end
-      doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/1011639/#{page_suffix}"))
+      doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/1011639/#{page_suffix}").read)
       doc.xpath('//*[@id="forum-topics"]/tbody[@class="regular-topics sort-connect"]/tr').each do |item|
         topic_id = item.xpath('@data-topic-id').to_s.to_i
         title = item.xpath('td[@class="title-cell"]/a/span').text.to_s
         date_created = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateCreated"]/@content').to_s.to_datetime
         date_modified = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateModified"]/@content').to_s.to_datetime
-        begin
-          post = Post.find_by(topic_id: topic_id, title: title)
-        rescue ActiveRecord::RecordNotUnique
-          retry
-        end
+        post = Post.find_by(topic_id: topic_id)
         # Responded
         if post
           # Update date modified if necessary
@@ -56,8 +52,11 @@ class Post < ActiveRecord::Base
 
   def find_response
     guild_url = '/wow/en/guild/hyjal/Vox%20Immortalis/'
-    doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/topic/#{self.topic_id}"))
+    doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/topic/#{self.topic_id}").read)
     pages = page_count(doc)
+    author_armory = doc.search('div[@class="user-details"]').first.search('a[@class*=context-link] @href').to_s
+    author_name = doc.search('div[@class=user-details]').first.search('a[@class*=context-link] span[@class=poster-name]').text.to_s
+    self.update_attributes(author_armory: author_armory ? "http://us.battle.net#{author_armory}" : nil, author_name: author_name)
     doc.search('.topic-post').each do |item|
       guild = item.search('.guild a @href').to_s
       character = item.search('.bnet-username a span').text.to_s
@@ -71,7 +70,7 @@ class Post < ActiveRecord::Base
       pages.times do |count|
         if count > 0
           page_suffix = "?page=#{count+1}"
-          doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/topic/#{self.topic_id}#{page_suffix}"))
+          doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/topic/#{self.topic_id}#{page_suffix}").read)
           doc.search('.topic-post').each do |item|
             guild = item.search('.guild a @href').to_s
             character = item.search('.bnet-username a span').text.to_s

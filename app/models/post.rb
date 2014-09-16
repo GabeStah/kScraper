@@ -2,8 +2,6 @@ class Post < ActiveRecord::Base
   require 'open-uri'
   require 'nokogiri'
 
-  after_commit :schedule_response_scan
-
   validates :title,
             presence: true
   validates :topic_id,
@@ -19,38 +17,37 @@ class Post < ActiveRecord::Base
     where(date_created: date_time..Time.now)
   end
 
-  def self.populate_posts(args = {})
+  def self.populate_posts(page_count)
     @posts = Array.new
-    page_count = args[:page_count] ? args[:page_count] : 1
-    page_count.times do |count|
-      if count != 1
-        page_suffix = "?page=#{count}"
-      end
-      doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/1011639/#{page_suffix}").read)
-      doc.xpath('//*[@id="forum-topics"]/tbody[@class="regular-topics sort-connect"]/tr').each do |item|
-        topic_id = item.xpath('@data-topic-id').to_s.to_i
-        title = item.xpath('td[@class="title-cell"]/a/span').text.to_s
-        date_created = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateCreated"]/@content').to_s.to_datetime
-        date_modified = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateModified"]/@content').to_s.to_datetime
-        post = Post.find_by(topic_id: topic_id)
-        # Responded
-        if post
-          # Update date modified if necessary
-          post.update_attributes(date_modified: date_modified) if post.date_modified.to_datetime != date_modified
-        else
-          Post.create(topic_id: topic_id,
-                      title: title,
-                      ignored: false,
-                      date_created: date_created,
-                      date_modified: date_modified,
-                      responded: false)
-        end
+    page_suffix = "?page=#{page_count ? page_count : 1}"
+    doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/1011639/#{page_suffix}").read)
+    doc.xpath('//*[@id="forum-topics"]/tbody[@class="regular-topics sort-connect"]/tr').each do |item|
+      topic_id = item.xpath('@data-topic-id').to_s.to_i
+      title = item.xpath('td[@class="title-cell"]/a/span').text.to_s
+      date_created = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateCreated"]/@content').to_s.to_datetime
+      date_modified = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateModified"]/@content').to_s.to_datetime
+      post = Post.find_by(topic_id: topic_id)
+      # Responded
+      if post
+        # Update date modified if necessary
+        post.update_attributes(date_modified: date_modified) if post.date_modified.to_datetime != date_modified
+        post.find_response
+      else
+        post = Post.create(topic_id: topic_id,
+                           title: title,
+                           ignored: false,
+                           date_created: date_created,
+                           date_modified: date_modified,
+                           responded: false)
+        # Find response
+        post.find_response
       end
     end
     @posts
   end
 
   def find_response
+    return if self.responded
     guild_url = '/wow/en/guild/hyjal/Vox%20Immortalis/'
     doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/topic/#{self.topic_id}").read)
     pages = page_count(doc)
@@ -117,9 +114,4 @@ class Post < ActiveRecord::Base
     "http://us.battle.net/wow/en/forum/topic/#{topic_id}"
   end
 
-  private
-
-  def schedule_response_scan
-    ResponseWorker.perform_async(self.id)
-  end
 end

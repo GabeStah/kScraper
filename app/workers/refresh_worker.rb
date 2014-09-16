@@ -1,10 +1,10 @@
 class RefreshWorker
   include Sidekiq::Worker
-  include Sidetiq::Schedulable
-
-  recurrence do
-    minutely(5)
-  end
+  # include Sidetiq::Schedulable
+  #
+  # recurrence do
+  #   minutely(5)
+  # end
 
   def perform
     posts = Post.newer_than(4.week.ago).where(responded: false, ignored: false)

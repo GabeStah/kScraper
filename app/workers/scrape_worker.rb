@@ -7,7 +7,7 @@ class ScrapeWorker
     minutely(1)
   end
 
-  def perform
-    Post.populate_posts(page_count: 1)
+  def perform(page_count)
+    Post.populate_posts(page_count ? page_count : 1)
   end
 end

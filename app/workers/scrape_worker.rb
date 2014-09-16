@@ -4,11 +4,12 @@ class ScrapeWorker
   sidekiq_options queue: :priority
 
   recurrence do
-    minutely(1)
+    secondly(30)
   end
 
-  def perform(page_count)
+  def perform(page_count, thread_limit)
     page_count = 1 if page_count && page_count.to_i > 50
-    Post.populate_posts(page_count)
+    thread_limit = 10 if thread_limit && thread_limit.to_i > 100
+    Post.populate_posts(page_count, thread_limit)
   end
 end

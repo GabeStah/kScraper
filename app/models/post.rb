@@ -17,33 +17,36 @@ class Post < ActiveRecord::Base
     where(date_created: date_time..Time.now)
   end
 
-  def self.populate_posts(page_count)
-    @posts = Array.new
-    page_suffix = "?page=#{page_count ? page_count : 1}"
+  def self.populate_posts(page_num=1, thread_limit)
+    page_suffix = "?page=#{page_num}"
     doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/1011639/#{page_suffix}").read)
+    thread_limit = 100 if thread_limit.nil?
+    thread_count = 1
     doc.xpath('//*[@id="forum-topics"]/tbody[@class="regular-topics sort-connect"]/tr').each do |item|
-      topic_id = item.xpath('@data-topic-id').to_s.to_i
-      title = item.xpath('td[@class="title-cell"]/a/span').text.to_s
-      date_created = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateCreated"]/@content').to_s.to_datetime
-      date_modified = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateModified"]/@content').to_s.to_datetime
-      post = Post.find_by(topic_id: topic_id)
-      # Responded
-      if post
-        # Update date modified if necessary
-        post.update_attributes(date_modified: date_modified) if post.date_modified.to_datetime != date_modified
-        post.find_response
-      else
-        post = Post.create(topic_id: topic_id,
-                           title: title,
-                           ignored: false,
-                           date_created: date_created,
-                           date_modified: date_modified,
-                           responded: false)
-        # Find response
-        post.find_response
+      while thread_count <= thread_limit
+        topic_id = item.xpath('@data-topic-id').to_s.to_i
+        title = item.xpath('td[@class="title-cell"]/a/span').text.to_s
+        date_created = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateCreated"]/@content').to_s.to_datetime
+        date_modified = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateModified"]/@content').to_s.to_datetime
+        post = Post.find_by(topic_id: topic_id)
+        # Responded
+        if post
+          # Update date modified if necessary
+          post.update_attributes(date_modified: date_modified) if post.date_modified.to_datetime != date_modified
+          post.find_response
+        else
+          post = Post.create(topic_id: topic_id,
+                             title: title,
+                             ignored: false,
+                             date_created: date_created,
+                             date_modified: date_modified,
+                             responded: false)
+          # Find response
+          post.find_response
+        end
+        thread_count += 1
       end
     end
-    @posts
   end
 
   def find_response

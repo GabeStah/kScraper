@@ -60,6 +60,7 @@ task :deploy => :environment do
     invoke :'deploy:link_shared_paths'
     invoke :'bundle:install'
     invoke :'rails:db_migrate'
+    #invoke :'migrate_production_db'
     invoke :'rails:assets_precompile'
     # Halt reset_db temporarily
     #invoke :reset_db
@@ -74,6 +75,11 @@ end
 desc "Resetting Database"
 task :reset_db do
   queue 'rake app:reset_production RAILS_ENV=production'
+end
+
+desc "Migrate Production Database"
+task :migrate_production_db do
+  queue 'rake db:migrate RAILS_ENV=production'
 end
 
 desc "Restart Rails"

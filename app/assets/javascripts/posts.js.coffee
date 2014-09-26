@@ -29,6 +29,14 @@ jQuery ->
     -> $(this).parent().parent().hide()
   )
 
+  # Points tooltips
+  $('#posts-table').on 'draw.dt', ->
+    $(".post-link").each ->
+      $(this).tipsy({gravity: 'nw', html: true, title: 'data-tip', css: { 'width': '500px' }}) unless $(this).data('tip') == undefined
+    $(".response-link").each ->
+      $(this).tipsy({gravity: 'ne', html: true, title: 'data-tip', css: { 'width': '500px' }}) unless $(this).data('tip') == undefined
+
+
 #  $('#posts-table tbody tr').each ->
 #    $('td:nth-of-type(3)').addClass('special')
 

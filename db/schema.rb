@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140915170316) do
+ActiveRecord::Schema.define(version: 20140926105723) do
 
   create_table "posts", force: true do |t|
     t.string   "title"
@@ -19,12 +19,16 @@ ActiveRecord::Schema.define(version: 20140915170316) do
     t.boolean  "ignored"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "topic_id",      limit: 8
+    t.integer  "topic_id",         limit: 8
     t.datetime "date_created"
     t.datetime "date_modified"
     t.string   "response_by"
     t.string   "author_name"
     t.string   "author_armory"
+    t.text     "post_content"
+    t.text     "response_content"
+    t.integer  "response_id",      limit: 8
+    t.string   "response_index"
   end
 
   add_index "posts", ["topic_id"], name: "index_posts_on_topic_id", unique: true, using: :btree

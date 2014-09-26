@@ -385,3 +385,11 @@ table.dataTable td {
     text-align: center; }
   .dataTables_wrapper .dataTables_filter {
     margin-top: 0.5em; } }
+
+.tipsy-inner {
+  background-color: #000;
+  color: #FFF;
+  max-width: 500px;
+  padding: 5px 8px 4px 8px;
+  text-align: left;
+}

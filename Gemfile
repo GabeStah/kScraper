@@ -49,8 +49,8 @@ gem 'mina-sidekiq'
 # Fonts!
 gem 'font-awesome-rails'
 
-# Tooltips
-gem 'bootstrap-tooltip-rails'
+# For tooltip capabilities
+gem 'tipsy-rails'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

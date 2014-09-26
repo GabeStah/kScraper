@@ -17,7 +17,7 @@ class Post < ActiveRecord::Base
     where(date_created: date_time..Time.now)
   end
 
-  def self.populate_posts(page_num=1, thread_limit)
+  def self.populate_posts(page_num=1, thread_limit=nil)
     page_suffix = "?page=#{page_num}"
     doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/1011639/#{page_suffix}").read)
     thread_limit = 75 if thread_limit.nil?
@@ -26,6 +26,7 @@ class Post < ActiveRecord::Base
       if thread_count <= thread_limit
         topic_id = item.xpath('@data-topic-id').to_s.to_i
         title = item.xpath('td[@class="title-cell"]/a/span').text.to_s
+        post_content = item.search('.topic-detail').inner_html.to_s
         date_created = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateCreated"]/@content').to_s.to_datetime
         date_modified = item.xpath('td[@class="title-cell"]/meta[@itemprop="dateModified"]/@content').to_s.to_datetime
         post = Post.find_by(topic_id: topic_id)
@@ -35,12 +36,13 @@ class Post < ActiveRecord::Base
           post.update_attributes(date_modified: date_modified) if post.date_modified.to_datetime != date_modified
           post.find_response
         else
-          post = Post.create(topic_id: topic_id,
-                             title: title,
-                             ignored: false,
-                             date_created: date_created,
+          post = Post.create(date_created: date_created,
                              date_modified: date_modified,
-                             responded: false)
+                             ignored: false,
+                             post_content: post_content,
+                             responded: false,
+                             title: title,
+                             topic_id: topic_id)
           # Find response
           post.find_response
         end
@@ -50,18 +52,26 @@ class Post < ActiveRecord::Base
   end
 
   def find_response
-    return if self.responded
+    return if self.responded && self.post_content && self.response_content
     guild_url = '/wow/en/guild/hyjal/Vox%20Immortalis/'
     doc = Nokogiri::HTML(open("http://us.battle.net/wow/en/forum/topic/#{self.topic_id}").read)
     pages = page_count(doc)
     author_armory = doc.search('div[@class="user-details"]').first.search('a[@class*=context-link] @href').to_s
     author_name = doc.search('div[@class=user-details]').first.search('a[@class*=context-link] span[@class=poster-name]').text.to_s
-    self.update_attributes(author_armory: author_armory ? "http://us.battle.net#{author_armory}" : nil, author_name: author_name)
+    post_content = doc.search('.post-detail').first.inner_html.to_s
+    if post_content != self.post_content
+      self.update_attributes(author_armory: author_armory ? "http://us.battle.net#{author_armory}" : nil, author_name: author_name, post_content: post_content)
+    else
+      self.update_attributes(author_armory: author_armory ? "http://us.battle.net#{author_armory}" : nil, author_name: author_name)
+    end
     doc.search('.topic-post').each do |item|
       guild = item.search('.guild a @href').to_s
       character = item.search('.bnet-username a span').text.to_s
+      response_content = item.search('.post-detail').inner_html.to_s
+      response_id = item.attribute('data-post-id').to_s.to_i
+      response_index = item.search('.post-index').attribute('href').to_s
       if guild != "" && guild == guild_url
-        self.update_attributes(response_by: character, responded: true)
+        self.update_attributes(response_by: character, response_content: response_content, response_id: response_id, response_index: response_index, responded: true)
         return true
       end
     end
@@ -74,8 +84,11 @@ class Post < ActiveRecord::Base
           doc.search('.topic-post').each do |item|
             guild = item.search('.guild a @href').to_s
             character = item.search('.bnet-username a span').text.to_s
+            response_content = item.search('.post-detail').inner_html.to_s
+            response_id = item.attribute('data-post-id').to_s.to_i
+            response_index = "#{page_suffix}#{item.search('.post-index').attribute('href').to_s}"
             if guild != "" && guild == guild_url
-              self.update_attributes(response_by: character, responded: true)
+              self.update_attributes(response_by: character, response_content: response_content, response_id: response_id, response_index: response_index, responded: true)
               return true
             end
           end
@@ -115,6 +128,10 @@ class Post < ActiveRecord::Base
 
   def url
     "http://us.battle.net/wow/en/forum/topic/#{topic_id}"
+  end
+
+  def response_url
+    "http://us.battle.net/wow/en/forum/topic/#{topic_id}#{response_index}" if response_id && response_index
   end
 
 end
